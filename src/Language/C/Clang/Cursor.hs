@@ -35,6 +35,7 @@ module Language.C.Clang.Cursor
   , cursorReferenced
   , cursorType
   , cursorKind
+  , cursorMangling
 
   , TypeLayoutError(..)
   , offsetOfField

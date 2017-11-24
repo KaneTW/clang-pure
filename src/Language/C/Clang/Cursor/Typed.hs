@@ -29,6 +29,7 @@ module Language.C.Clang.Cursor.Typed
   , cursorExtent
 
   , cursorSpelling
+  , cursorMangling
 
   , TypeLayoutError(..)
   , offsetOfField
@@ -73,6 +74,8 @@ cursorType = fromJust . UT.cursorType . withoutKind
 
 class HasChildren (kind :: CursorKind)
 
+class HasMangling (kind :: CursorKind)
+
 to :: (s -> a) -> Getter s a
 to k f = phantom . f . k
 
@@ -102,6 +105,9 @@ cursorSpelling = UT.cursorSpelling . withoutKind
 
 offsetOfField :: CursorK 'FieldDecl -> Either TypeLayoutError Word64
 offsetOfField = UT.offsetOfField . withoutKind
+
+cursorMangling :: HasMangling kind => CursorK kind -> BS.ByteString
+cursorMangling = UT.cursorMangling . withoutKind
 
 -- instances derived experimentally with the find-classes executable
 instance HasChildren 'ArraySubscriptExpr
@@ -304,3 +310,11 @@ instance HasSpelling 'TranslationUnit
 instance HasSpelling 'TypeRef
 instance HasSpelling 'TypedefDecl
 instance HasSpelling 'UsingDeclaration
+
+--TODO subclassing; model it
+instance HasMangling 'FunctionDecl
+instance HasMangling 'CXXMethod
+instance HasMangling 'Constructor
+instance HasMangling 'Destructor
+instance HasMangling 'ConversionFunction
+instance HasMangling 'VarDecl

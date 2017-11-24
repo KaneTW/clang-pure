@@ -168,6 +168,12 @@ cursorUSR c = uderef c $ \cp -> withCXString $ \cxsp ->
     *$(CXString *cxsp) = clang_getCursorUSR(*$(CXCursor *cp));
     } |]
 
+cursorMangling :: Cursor -> ByteString
+cursorMangling c = uderef c $ \cp -> withCXString $ \cxsp ->
+  [C.block| void {
+    *$(CXString *cxsp) = clang_Cursor_getMangling(*$(CXCursor *cp));
+    } |]
+
 cursorReferenced :: Cursor -> Maybe Cursor
 cursorReferenced c = uderef c $ \cp -> do
   rcp <- [C.block| CXCursor* {
